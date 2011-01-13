@@ -96,6 +96,61 @@ Feature: Request matching
       | :webmock   | em-http-request |
       | :typhoeus  | typhoeus        |
 
+  Scenario Outline: match on request body
+    Given a previously recorded cassette file "cassettes/example.yml" with:
+      """
+      --- 
+      - !ruby/struct:VCR::HTTPInteraction 
+        request: !ruby/struct:VCR::Request 
+          method: :post
+          uri: http://example.com:80/alpha?param=value&xoauth_signature_publickey=mykey&oauth_nonce=just_once!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1294349801&oauth_consumer_key=this-service&oauth_version=1.0
+          body: a=1
+          headers: 
+            content-type: 
+            - application/x-www-form-urlencoded
+        response: !ruby/struct:VCR::Response 
+          status: !ruby/struct:VCR::ResponseStatus 
+            code: 200
+            message: OK
+          headers: 
+            content-length: 
+            - "12"
+          body: a=1 response
+          http_version: "1.1"
+      """
+    And a file named "body_matching.rb" with:
+      """
+      require 'vcr_cucumber_helpers'
+      include_http_adapter_for("<http_lib>")
+
+      require 'vcr'
+
+      VCR.config do |c|
+        c.stub_with <stub_with>
+        c.cassette_library_dir = 'cassettes'
+      end
+
+      VCR.use_cassette('example', :record => :none, :match_requests_on => [:method, :uri_minus_oauth]) do
+        puts response_body_for(:post, "http://example.com/alpha?param=value&xoauth_signature_publickey=yourkey&oauth_nonce=just_twice!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1594349801&oauth_consumer_key=that-service&oauth_version=1.0")
+      end
+      """
+    When I run "ruby body_matching.rb"
+    Then it should pass with:
+      """
+      a=1 response
+      """
+
+    Examples:
+      | stub_with  | http_lib        |
+      | :fakeweb   | net/http        |
+      # | :webmock   | net/http        |
+      # | :webmock   | httpclient      |
+      # | :webmock   | patron          |
+      # | :webmock   | curb            |
+      # | :webmock   | em-http-request |
+      # | :typhoeus  | typhoeus        |
+  
+	
   Scenario Outline: match on host and path (to ignore query params)
     Given a previously recorded cassette file "cassettes/example.yml" with:
       """

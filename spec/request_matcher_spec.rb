@@ -15,7 +15,7 @@ describe VCR::RequestMatcher do
       end
     end
 
-    let(:uri) { 'http://foo.example.com/path/to/something?param=value' }
+    let(:uri) { 'http://foo.example.com/path/to/something?param=value&xoauth_signature_publickey=mykey&oauth_nonce=just_once!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1294349801&oauth_consumer_key=this-service&oauth_version=1.0' }
 
     for_matcher do
       it("returns a regex that matches any URI") { should == /.*/ }
@@ -24,6 +24,13 @@ describe VCR::RequestMatcher do
     for_matcher :uri do
       it("returns the exact uri") { should == uri }
     end
+    
+    for_matcher :uri_minus_oauth do
+      it("matches a uri with a different set of oauth arguments") {should =~ 'http://foo.example.com/path/to/something?param=value&xoauth_signature_publickey=yourkey&oauth_nonce=just_twice!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1594349801&oauth_consumer_key=that-service&oauth_version=1.0'}
+      it("does not match if the non-oauth args are different") {should_not =~ 'http://foo.example.com/path/to/something?param=different_value&xoauth_signature_publickey=yourkey&oauth_nonce=just_twice!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1594349801&oauth_consumer_key=that-service&oauth_version=1.0'}
+    end
+    
+    # TODO: Add matcher for [:method, :uri_minus_oauth] 
 
     for_matcher :host do
       it("matches a basic URL for the same host") { should =~ 'http://foo.example.com/some/path' }
