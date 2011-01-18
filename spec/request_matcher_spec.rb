@@ -30,8 +30,6 @@ describe VCR::RequestMatcher do
       it("does not match if the non-oauth args are different") {should_not =~ 'http://foo.example.com/path/to/something?param=different_value&xoauth_signature_publickey=yourkey&oauth_nonce=just_twice!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1594349801&oauth_consumer_key=that-service&oauth_version=1.0'}
     end
     
-    # TODO: Add matcher for [:method, :uri_minus_oauth] 
-
     for_matcher :host do
       it("matches a basic URL for the same host") { should =~ 'http://foo.example.com/some/path' }
       it("matches an https URL") { should =~ 'https://foo.example.com/some/path' }

@@ -96,7 +96,7 @@ Feature: Request matching
       | :webmock   | em-http-request |
       | :typhoeus  | typhoeus        |
 
-  Scenario Outline: match on request body
+  Scenario Outline: match on uri minus oauth params
     Given a previously recorded cassette file "cassettes/example.yml" with:
       """
       --- 
@@ -143,12 +143,6 @@ Feature: Request matching
     Examples:
       | stub_with  | http_lib        |
       | :fakeweb   | net/http        |
-      # | :webmock   | net/http        |
-      # | :webmock   | httpclient      |
-      # | :webmock   | patron          |
-      # | :webmock   | curb            |
-      # | :webmock   | em-http-request |
-      # | :typhoeus  | typhoeus        |
   
 	
   Scenario Outline: match on host and path (to ignore query params)
