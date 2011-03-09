@@ -15,7 +15,7 @@ describe VCR::RequestMatcher do
       end
     end
 
-    let(:uri) { 'http://foo.example.com/path/to/something?param=value&xoauth_signature_publickey=mykey&oauth_nonce=just_once!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1294349801&oauth_consumer_key=this-service&oauth_version=1.0' }
+    let(:uri) { 'http://foo.example.com/path/to/something?param=value&xoauth_signature_publickey=mykey&oauth_nonce=just_once!&oauth_signature_method=RSA-SHA1&oauth_timestamp=1294349801&oauth_consumer_key=this-service&oauth_version=1.0&xoauth_requestor_id=' }
 
     for_matcher do
       it("returns a regex that matches any URI") { should == /.*/ }

@@ -28,7 +28,7 @@ module VCR
       uri_matchers = match_attributes.to_a & [:uri, :uri_minus_oauth, :host, :path]
 
       uri = URI(request.uri)
-      request.uri =~ %r{(\Ahttps?://[^/]+#{Regexp.escape(uri.path)}/?.*?)(x?oauth.+=[^&]+)*\z}
+      request.uri =~ %r{(\Ahttps?://[^/]+#{Regexp.escape(uri.path)}/?.*?)(x?oauth.+=[^&]*)*\z}
       uri_without_oauth = $1
       uri_minus_oauth_pattern = %r{\A#{Regexp.escape(uri_without_oauth)}.*\z}i
       
